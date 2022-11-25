@@ -1,46 +1,66 @@
 CREATE TABLE "users" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4 ()),
+  "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
   "name" varchar NOT NULL,
-  "created_at" timestamp NOT NULL DEFAULT (now())
+  "email" varchar NOT NULL,
+  "password" varchar NOT NULL,
+  "created_by" uuid NOT NULL,
+  "created_at" timestamp NOT NULL DEFAULT (now()),
+  "last_updated_by" uuid NOT NULL,
+  "last_updated_date" timestamp NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "topics" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4 ()),
+  "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
   "topic_name" varchar NOT NULL,
-  "created_at" timestamp NOT NULL DEFAULT (now())
+  "created_by" uuid NOT NULL,
+  "created_at" timestamp NOT NULL DEFAULT (now()),
+  "last_updated_by" uuid NOT NULL,
+  "last_updated_date" timestamp NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "posts" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4 ()),
+  "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
   "owner_id" uuid NOT NULL,
   "topic_id" uuid NOT NULL,
-  "created_at" timestamp NOT NULL DEFAULT (now()),
   "content" varchar NOT NULL,
-  "title" varchar NOT NULL
+  "title" varchar NOT NULL,
+  "created_by" uuid NOT NULL,
+  "created_at" timestamp NOT NULL DEFAULT (now()),
+  "last_updated_by" uuid NOT NULL,
+  "last_updated_date" timestamp NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "comment" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4 ()),
+  "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
   "owner_id" uuid NOT NULL,
   "post_id" uuid NOT NULL,
   "main_comment_id" uuid NOT NULL,
+  "content" varchar NOT NULL,
+  "created_by" uuid NOT NULL,
   "created_at" timestamp NOT NULL DEFAULT (now()),
-  "content" varchar NOT NULL
+  "last_updated_by" uuid NOT NULL,
+  "last_updated_date" timestamp NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "likes" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4 ()),
+  "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
   "user_id" uuid,
   "liked_id" uuid,
-  "type" tinyint,
-  "created_at" timestamp NOT NULL DEFAULT (now())
+  "type" smallint,
+  "created_by" uuid NOT NULL,
+  "created_at" timestamp NOT NULL DEFAULT (now()),
+  "last_updated_by" uuid NOT NULL,
+  "last_updated_date" timestamp NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "followship" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4 ()),
+  "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
   "follower_id" uuid,
   "topic_id" uuid,
-  "created_at" timestamp NOT NULL DEFAULT (now())
+  "created_by" uuid NOT NULL,
+  "created_at" timestamp NOT NULL DEFAULT (now()),
+  "last_updated_by" uuid NOT NULL,
+  "last_updated_date" timestamp NOT NULL DEFAULT (now())
 );
 
 COMMENT ON COLUMN "comment"."main_comment_id" IS 'if this field is 0 mean it is the top-level comment';
