@@ -16,7 +16,7 @@ INSERT INTO users (
   name
 ) VALUES (
   $1
-) RETURNING id, name, email, password, created_by, created_at, last_updated_by, last_updated_date
+) RETURNING id, name, email, password, created_by, created_at, last_updated_by, last_updated_at
 `
 
 func (q *Queries) CreateUser(ctx context.Context, name string) (User, error) {
@@ -30,13 +30,13 @@ func (q *Queries) CreateUser(ctx context.Context, name string) (User, error) {
 		&i.CreatedBy,
 		&i.CreatedAt,
 		&i.LastUpdatedBy,
-		&i.LastUpdatedDate,
+		&i.LastUpdatedAt,
 	)
 	return i, err
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, name, email, password, created_by, created_at, last_updated_by, last_updated_date FROM users
+SELECT id, name, email, password, created_by, created_at, last_updated_by, last_updated_at FROM users
 WHERE id = $1 LIMIT 1
 `
 
@@ -51,13 +51,13 @@ func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (User, error) {
 		&i.CreatedBy,
 		&i.CreatedAt,
 		&i.LastUpdatedBy,
-		&i.LastUpdatedDate,
+		&i.LastUpdatedAt,
 	)
 	return i, err
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, name, email, password, created_by, created_at, last_updated_by, last_updated_date FROM users
+SELECT id, name, email, password, created_by, created_at, last_updated_by, last_updated_at FROM users
 ORDER BY name
 `
 
@@ -78,7 +78,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 			&i.CreatedBy,
 			&i.CreatedAt,
 			&i.LastUpdatedBy,
-			&i.LastUpdatedDate,
+			&i.LastUpdatedAt,
 		); err != nil {
 			return nil, err
 		}

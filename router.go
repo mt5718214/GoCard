@@ -20,7 +20,7 @@ func initRouter() *gin.Engine {
 		//v1.Use(api.JWTAuthMiddleware())
 
 		// route
-		route.TodoRouter(v1)
+		route.GocardRouter(v1)
 	}
 
 	return server

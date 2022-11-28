@@ -11,4 +11,4 @@ WHERE id = $1 LIMIT 1;
 
 -- name: ListUsers :many
 SELECT * FROM users
-ORDER BY name;
+ORDER BY created_at;
