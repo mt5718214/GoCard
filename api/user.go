@@ -43,5 +43,4 @@ func GetUser(c *gin.Context) {
 			"result": rows,
 		})
 	}
-
 }
