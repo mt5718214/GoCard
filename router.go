@@ -17,10 +17,10 @@ func initRouter() *gin.Engine {
 		v1.POST("/signup", api.RegisterHandler)
 
 		// The following routes will be authenticated
-		//v1.Use(api.JWTAuthMiddleware())
+		v1.Use(api.JWTAuthMiddleware())
 
 		// route
-		route.GocardRouter(v1)
+		route.FollowshipRouter(v1)
 	}
 
 	return server

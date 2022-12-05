@@ -11,30 +11,6 @@ import (
 	"github.com/google/uuid"
 )
 
-const createUser = `-- name: CreateUser :one
-INSERT INTO users (
-  name
-) VALUES (
-  $1
-) RETURNING id, name, email, password, created_by, created_at, last_updated_by, last_updated_at
-`
-
-func (q *Queries) CreateUser(ctx context.Context, name string) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, name)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Email,
-		&i.Password,
-		&i.CreatedBy,
-		&i.CreatedAt,
-		&i.LastUpdatedBy,
-		&i.LastUpdatedAt,
-	)
-	return i, err
-}
-
 const getUser = `-- name: GetUser :one
 SELECT id, name, email, password, created_by, created_at, last_updated_by, last_updated_at FROM users
 WHERE id = $1 LIMIT 1
@@ -58,7 +34,7 @@ func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (User, error) {
 
 const listUsers = `-- name: ListUsers :many
 SELECT id, name, email, password, created_by, created_at, last_updated_by, last_updated_at FROM users
-ORDER BY name
+ORDER BY created_at
 `
 
 func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
@@ -91,4 +67,28 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const postUser = `-- name: PostUser :one
+INSERT INTO users (
+  name
+) VALUES (
+  $1
+) RETURNING id, name, email, password, created_by, created_at, last_updated_by, last_updated_at
+`
+
+func (q *Queries) PostUser(ctx context.Context, name string) (User, error) {
+	row := q.db.QueryRowContext(ctx, postUser, name)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.Password,
+		&i.CreatedBy,
+		&i.CreatedAt,
+		&i.LastUpdatedBy,
+		&i.LastUpdatedAt,
+	)
+	return i, err
 }
