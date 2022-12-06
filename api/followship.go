@@ -10,6 +10,18 @@ import (
 	"github.com/google/uuid"
 )
 
+//	@followship	/api/v1
+
+// PostFollowship godoc
+//	@Summary	PostFollowship by toipcId
+//	@Schemes
+//	@Description	PostFollowship by toipcId
+//	@Tags			followship
+//	@Accept			json
+//	@Produce		json
+//  @Param        topicID   path      string  true  "topicID(uuid)"
+//	@Success	  200  {string} json "{"result":{}}"
+//	@Router			/followship/:topicId [post]
 func PostFollowship(c *gin.Context) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -54,6 +66,16 @@ func PostFollowship(c *gin.Context) {
 
 }
 
+// DeleteFollowship godoc
+//	@Summary	DeleteFollowship by toipcId
+//	@Schemes
+//	@Description	DeleteFollowship by toipcId
+//	@Tags			followship
+//	@Accept			json
+//	@Produce		json
+//  @Param        topicID   path      string  true  "topicID(uuid)"
+//	@Success	  204
+//	@Router			/followship/:topicId [delete]
 func DeleteFollowship(c *gin.Context) {
 	defer func() {
 		if r := recover(); r != nil {
