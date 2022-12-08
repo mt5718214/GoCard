@@ -1,4 +1,4 @@
--- name: CreateUser :one
+-- name: PostUser :one
 INSERT INTO users (
   name
 ) VALUES (

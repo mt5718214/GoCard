@@ -38,7 +38,8 @@ CREATE TABLE "followship" (
   "created_by" uuid NOT NULL,
   "created_at" timestamp NOT NULL DEFAULT (now()),
   "last_updated_by" uuid NOT NULL,
-  "last_updated_at" timestamp NOT NULL DEFAULT (now())
+  "last_updated_at" timestamp NOT NULL DEFAULT (now()),
+  CONSTRAINT followship_un UNIQUE (follower_id, topic_id)
 );
 
 CREATE TABLE "likes" (

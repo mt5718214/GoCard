@@ -1,0 +1,52 @@
+info:
+  contact: {}
+paths:
+  /followship/:topicId:
+    delete:
+      consumes:
+      - application/json
+      description: DeleteFollowship by toipcId
+      parameters:
+      - description: topicID(uuid)
+        in: path
+        name: topicID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: DeleteFollowship by toipcId
+      tags:
+      - followship
+    post:
+      consumes:
+      - application/json
+      description: PostFollowship by toipcId
+      parameters:
+      - description: topicID(uuid)
+        in: path
+        name: topicID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"result":{}}'
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: PostFollowship by toipcId
+      tags:
+      - followship
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

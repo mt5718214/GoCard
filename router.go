@@ -5,10 +5,13 @@ import (
 	route "gocard/route"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func initRouter() *gin.Engine {
 	server := gin.Default()
+	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// router
 	v1 := server.Group("/dev/api/v1")
@@ -17,10 +20,10 @@ func initRouter() *gin.Engine {
 		v1.POST("/signup", api.RegisterHandler)
 
 		// The following routes will be authenticated
-		//v1.Use(api.JWTAuthMiddleware())
+		v1.Use(api.JWTAuthMiddleware())
 
 		// route
-		route.GocardRouter(v1)
+		route.FollowshipRouter(v1)
 	}
 
 	return server

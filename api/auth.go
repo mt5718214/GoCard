@@ -4,14 +4,15 @@ import (
 	"errors"
 	"fmt"
 	db "gocard/db"
+	sqlc "gocard/db/sqlc"
 	"gocard/util"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	jwt "github.com/golang-jwt/jwt/v4"
+	"github.com/google/uuid"
 )
 
 var (
@@ -21,11 +22,6 @@ var (
 
 type userInfoReqBody struct {
 	Username, Password, CheckPassword string
-}
-
-type userInfo struct {
-	Id                 int
-	Username, Password string
 }
 
 func RegisterHandler(c *gin.Context) {
@@ -56,8 +52,8 @@ func RegisterHandler(c *gin.Context) {
 	}
 
 	row := db.SqlDB.QueryRow("SELECT username FROM users WHERE username = ?", username)
-	var userInfo userInfo
-	err = row.Scan(&userInfo.Username)
+	var userInfo sqlc.User
+	err = row.Scan(&userInfo.Name)
 	if err != nil {
 		// hash password before insert
 		hashString := util.HashPassword(password)
@@ -90,7 +86,7 @@ func RegisterHandler(c *gin.Context) {
 }
 
 func AuthHandler(c *gin.Context) {
-	var userInfo userInfo
+	var userInfo sqlc.User
 	err := c.BindJSON(&userInfo)
 	if err != nil {
 		fmt.Println("BindJSON error: ", err.Error())
@@ -98,7 +94,7 @@ func AuthHandler(c *gin.Context) {
 		return
 	}
 
-	username := strings.Trim(userInfo.Username, " ")
+	username := strings.Trim(userInfo.Name, " ")
 	password := strings.Trim(userInfo.Password, " ")
 	if username == "" || password == "" {
 		c.JSON(400, gin.H{
@@ -108,7 +104,7 @@ func AuthHandler(c *gin.Context) {
 	}
 
 	row := db.SqlDB.QueryRow("SELECT id, username, password FROM users WHERE username = ?", username)
-	err = row.Scan(&userInfo.Id, &userInfo.Username, &userInfo.Password)
+	err = row.Scan(&userInfo.ID, &userInfo.Name, &userInfo.Password)
 	if err != nil {
 		fmt.Println("QueryRow error: ", err.Error())
 		c.JSON(400, gin.H{
@@ -127,7 +123,7 @@ func AuthHandler(c *gin.Context) {
 	}
 
 	// sign JWT token and return to client
-	token, err := createJWT("token", userInfo.Id, userInfo.Username)
+	token, err := createJWT("token", userInfo.ID, userInfo.Name)
 	if err != nil {
 		fmt.Println("createJWT error: ", err.Error())
 		c.JSON(400, gin.H{
@@ -186,7 +182,7 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 // 	UserInfo interface{}
 // }
 
-func createJWT(sub string, userId int, username string) (string, error) {
+func createJWT(sub string, userId uuid.UUID, username string) (string, error) {
 	// Create the Claims
 	nowTime := time.Now()
 	expireTime := nowTime.Add(12 * time.Hour)
@@ -196,7 +192,7 @@ func createJWT(sub string, userId int, username string) (string, error) {
 		Audience:  []string{username},
 		ExpiresAt: jwt.NewNumericDate(expireTime),
 		IssuedAt:  jwt.NewNumericDate(nowTime),
-		ID:        strconv.Itoa(userId),
+		ID:        uuid.UUID.String(userId),
 	}
 
 	// token instance
