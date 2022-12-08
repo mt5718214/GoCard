@@ -18,6 +18,11 @@ const docTemplate = `{
     "paths": {
         "/followship/:topicId": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "PostFollowship by toipcId",
                 "consumes": [
                     "application/json"
@@ -48,6 +53,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "DeleteFollowship by toipcId",
                 "consumes": [
                     "application/json"
@@ -74,6 +84,13 @@ const docTemplate = `{
                     }
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

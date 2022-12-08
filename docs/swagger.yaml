@@ -17,6 +17,8 @@ paths:
       responses:
         "204":
           description: No Content
+      security:
+      - BearerAuth: []
       summary: DeleteFollowship by toipcId
       tags:
       - followship
@@ -37,7 +39,14 @@ paths:
           description: '{"result":{}}'
           schema:
             type: string
+      security:
+      - BearerAuth: []
       summary: PostFollowship by toipcId
       tags:
       - followship
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

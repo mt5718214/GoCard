@@ -10,18 +10,19 @@ import (
 	"github.com/google/uuid"
 )
 
-//	@followship	/api/v1
+//@followship	/api/v1
 
 // PostFollowship godoc
-//	@Summary	PostFollowship by toipcId
-//	@Schemes
-//	@Description	PostFollowship by toipcId
-//	@Tags			followship
-//	@Accept			json
-//	@Produce		json
-//  @Param        topicID   path      string  true  "topicID(uuid)"
-//	@Success	  200  {string} json "{"result":{}}"
-//	@Router			/followship/:topicId [post]
+// @Summary		PostFollowship by toipcId
+// @Schemes
+// @Description	PostFollowship by toipcId
+// @Tags		followship
+// @Accept		json
+// @Produce		json
+// @Param       topicID		path		string		true  "topicID(uuid)"
+// @Success	  	200			{string}	json		"{"result":{}}"
+// @Router		/followship/:topicId [post]
+// @Security 	BearerAuth
 func PostFollowship(c *gin.Context) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -29,9 +30,6 @@ func PostFollowship(c *gin.Context) {
 			c.JSON(400, gin.H{"result": "UUID format error"})
 		}
 	}()
-	//inputUUid, err := uuid.Parse("7b425632-aadb-4aec-8dfc-feca9d978ad2")
-	//token, _ := createJWT("sub", inputUUid, "albert")
-	//log.Fatal(token)
 	topicID := uuid.MustParse(c.Param("topicId"))
 	userId, err := uuid.Parse(c.GetString("userId"))
 	if err != nil {
@@ -67,15 +65,16 @@ func PostFollowship(c *gin.Context) {
 }
 
 // DeleteFollowship godoc
-//	@Summary	DeleteFollowship by toipcId
-//	@Schemes
-//	@Description	DeleteFollowship by toipcId
-//	@Tags			followship
-//	@Accept			json
-//	@Produce		json
-//  @Param        topicID   path      string  true  "topicID(uuid)"
-//	@Success	  204
-//	@Router			/followship/:topicId [delete]
+// @Summary	DeleteFollowship by toipcId
+// @Schemes
+// @Description	DeleteFollowship by toipcId
+// @Tags			followship
+// @Accept			json
+// @Produce		json
+// @Param        topicID   path      string  true  "topicID(uuid)"
+// @Success	  204
+// @Router			/followship/:topicId [delete]
+// @Security BearerAuth
 func DeleteFollowship(c *gin.Context) {
 	defer func() {
 		if r := recover(); r != nil {
