@@ -12,7 +12,8 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func CreateRandomUser(n int) string {
+// RandomString generates a random string of length n
+func RandomString(n int) string {
 	// golang的字串拼接: https://www.cnblogs.com/apocelipes/p/9283841.html
 
 	var sb strings.Builder
