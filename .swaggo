@@ -1,0 +1,2 @@
+// Replace all NullUUID with string
+replace uuid.NullUUID string

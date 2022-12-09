@@ -16,6 +16,20 @@ definitions:
         type: string
       password:
         type: string
+  db.PostpostsParams:
+    properties:
+      content:
+        type: string
+      created_by:
+        type: string
+      last_updated_by:
+        type: string
+      owner_id:
+        type: string
+      title:
+        type: string
+      topic_id:
+        type: string
     type: object
 info:
   contact: {}
