@@ -24,6 +24,7 @@ func initRouter() *gin.Engine {
 		v1.Use(service.JWTAuthMiddleware())
 
 		// route
+		route.PostRouter(v1)
 		route.FollowshipRouter(v1)
 	}
 
