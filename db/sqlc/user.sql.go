@@ -71,14 +71,36 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 
 const postUser = `-- name: PostUser :one
 INSERT INTO users (
-  name
+  name,
+  email,
+  password,
+  created_by,
+  last_updated_by
 ) VALUES (
-  $1
+  $1,
+  $2,
+  $3,
+  $4,
+  $5
 ) RETURNING id, name, email, password, created_by, created_at, last_updated_by, last_updated_at
 `
 
-func (q *Queries) PostUser(ctx context.Context, name string) (User, error) {
-	row := q.db.QueryRowContext(ctx, postUser, name)
+type PostUserParams struct {
+	Name          string    `json:"name"`
+	Email         string    `json:"email"`
+	Password      string    `json:"password"`
+	CreatedBy     uuid.UUID `json:"created_by"`
+	LastUpdatedBy uuid.UUID `json:"last_updated_by"`
+}
+
+func (q *Queries) PostUser(ctx context.Context, arg PostUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, postUser,
+		arg.Name,
+		arg.Email,
+		arg.Password,
+		arg.CreatedBy,
+		arg.LastUpdatedBy,
+	)
 	var i User
 	err := row.Scan(
 		&i.ID,

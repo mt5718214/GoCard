@@ -56,7 +56,7 @@ CREATE TABLE "likes" (
 CREATE TABLE "users" (
   "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
   "name" varchar NOT NULL,
-  "email" varchar NOT NULL,
+  "email" varchar UNIQUE NOT NULL,
   "password" varchar NOT NULL,
   "created_by" uuid NOT NULL,
   "created_at" timestamp NOT NULL DEFAULT (now()),

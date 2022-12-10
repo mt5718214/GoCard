@@ -1,8 +1,16 @@
 -- name: PostUser :one
 INSERT INTO users (
-  name
+  name,
+  email,
+  password,
+  created_by,
+  last_updated_by
 ) VALUES (
-  $1
+  $1,
+  $2,
+  $3,
+  $4,
+  $5
 ) RETURNING *;
 
 -- name: GetUser :one
