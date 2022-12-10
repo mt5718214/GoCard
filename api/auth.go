@@ -5,7 +5,9 @@ import (
 	"fmt"
 	db "gocard/db"
 	sqlc "gocard/db/sqlc"
+	enum "gocard/enum"
 	"gocard/util"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -21,9 +23,22 @@ var (
 )
 
 type userInfoReqBody struct {
-	Username, Password, CheckPassword string
+	Name          string
+	Email         string
+	Password      string
+	CheckPassword string
 }
 
+// RegisterHandler godoc
+// @Summary				 User register
+// @Schemes
+// @Description		 User register
+// @Tags					 system
+// @Accept				 json
+// @Produce				 json
+// @Param       	 request body userInfoReqBody true "userInfoReqBody"
+// @Success	  		 201			{string}	json		"{"result":"Create user success"}"
+// @Router				 /signup [post]
 func RegisterHandler(c *gin.Context) {
 	var userInfoReqBody userInfoReqBody
 	err := c.BindJSON(&userInfoReqBody)
@@ -33,11 +48,12 @@ func RegisterHandler(c *gin.Context) {
 		return
 	}
 
-	username := strings.Trim(userInfoReqBody.Username, " ")
+	username := strings.Trim(userInfoReqBody.Name, " ")
 	password := strings.Trim(userInfoReqBody.Password, " ")
+	email := strings.Trim(userInfoReqBody.Email, " ")
 	checkPassword := strings.Trim(userInfoReqBody.CheckPassword, " ")
 
-	if username == "" || password == "" || checkPassword == "" {
+	if username == "" || password == "" || email == "" || checkPassword == "" {
 		c.JSON(400, gin.H{
 			"message": "field can't be empty",
 		})
@@ -51,37 +67,31 @@ func RegisterHandler(c *gin.Context) {
 		return
 	}
 
-	row := db.SqlDB.QueryRow("SELECT username FROM users WHERE username = ?", username)
-	var userInfo sqlc.User
-	err = row.Scan(&userInfo.Name)
-	if err != nil {
-		// hash password before insert
-		hashString := util.HashPassword(password)
+	arg := sqlc.PostUserParams{
+		Name:          username,
+		Password:      util.HashPassword(password),
+		Email:         email,
+		CreatedBy:     enum.Admin.AdminUuid(),
+		LastUpdatedBy: enum.Admin.AdminUuid(),
+	}
 
-		result, insertErr := db.SqlDB.Exec("INSERT INTO users (username, password) VALUES (?, ?)", username, hashString)
-		if insertErr != nil {
-			fmt.Println("Data insert error: ", insertErr.Error())
+	if _, err = db.Queries.PostUser(c, arg); err != nil {
+		log.Print("[Error] PostUser error: ", err.Error())
+		if strings.Contains(err.Error(), "duplicate") {
 			c.JSON(400, gin.H{
-				"messages": "Data insert error",
+				"result": "Email is exist",
 			})
 			return
 		}
 
-		if affect, _ := result.RowsAffected(); affect != 1 {
-			fmt.Println("Data insert failed")
-			c.JSON(400, gin.H{
-				"messages": "Data insert failed",
-			})
-			return
-		}
-		c.JSON(200, gin.H{
-			"messages": "Create user success",
+		c.JSON(400, gin.H{
+			"result": "PostUser error",
 		})
 		return
 	}
 
-	c.JSON(400, gin.H{
-		"message": "Username already exist",
+	c.JSON(201, gin.H{
+		"result": "Create user success",
 	})
 }
 
