@@ -22,7 +22,7 @@ var (
 	mySigningKey = []byte("mySigningKey")
 )
 
-type userInfoReqBody struct {
+type signupReqBody struct {
 	Name          string
 	Email         string
 	Password      string
@@ -40,7 +40,7 @@ type userInfoReqBody struct {
 // @Success	  		 201			{string}	json		"{"result":"Create user success"}"
 // @Router				 /signup [post]
 func RegisterHandler(c *gin.Context) {
-	var userInfoReqBody userInfoReqBody
+	var userInfoReqBody signupReqBody
 	err := c.BindJSON(&userInfoReqBody)
 	if err != nil {
 		fmt.Println("BindJSON error: ", err.Error())
