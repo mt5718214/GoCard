@@ -45,6 +45,16 @@ func RegisterHandler(username, password, email string) (string, error) {
 	return "Create user success", nil
 }
 
+// AuthHandler godoc
+// @Summary			verify user information and issue token
+// @Schemes
+// @Description	verify user information and issue token
+// @Tags				system
+// @Accept			json
+// @Produce			json
+// @Param       request body loginReqBody true "loginReqBody"
+// @Success	  	200			{string}	json		"{"result": "JWT token"}"
+// @Router			/login [post]
 func AuthHandler(c *gin.Context) {
 	var (
 		userInfo loginReqBody
