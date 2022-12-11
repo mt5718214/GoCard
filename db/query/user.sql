@@ -13,9 +13,9 @@ INSERT INTO users (
   $5
 ) RETURNING *;
 
--- name: GetUser :one
-SELECT * FROM users
-WHERE id = $1 LIMIT 1;
+-- name: GetUserByEmail :one
+SELECT id, name, email, password FROM users
+WHERE email = $1 LIMIT 1;
 
 -- name: ListUsers :many
 SELECT * FROM users

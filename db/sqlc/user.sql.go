@@ -11,23 +11,26 @@ import (
 	"github.com/google/uuid"
 )
 
-const getUser = `-- name: GetUser :one
-SELECT id, name, email, password, created_by, created_at, last_updated_by, last_updated_at FROM users
-WHERE id = $1 LIMIT 1
+const getUserByEmail = `-- name: GetUserByEmail :one
+SELECT id, name, email, password FROM users
+WHERE email = $1 LIMIT 1
 `
 
-func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (User, error) {
-	row := q.db.QueryRowContext(ctx, getUser, id)
-	var i User
+type GetUserByEmailRow struct {
+	ID       uuid.UUID `json:"id"`
+	Name     string    `json:"name"`
+	Email    string    `json:"email"`
+	Password string    `json:"password"`
+}
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error) {
+	row := q.db.QueryRowContext(ctx, getUserByEmail, email)
+	var i GetUserByEmailRow
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
 		&i.Email,
 		&i.Password,
-		&i.CreatedBy,
-		&i.CreatedAt,
-		&i.LastUpdatedBy,
-		&i.LastUpdatedAt,
 	)
 	return i, err
 }
