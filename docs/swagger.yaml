@@ -1,5 +1,5 @@
 definitions:
-  api.userInfoReqBody:
+  controller.SignupReqBody:
     properties:
       checkPassword:
         type: string
@@ -62,12 +62,12 @@ paths:
       - application/json
       description: User register
       parameters:
-      - description: userInfoReqBody
+      - description: SignupReqBody
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/api.userInfoReqBody'
+          $ref: '#/definitions/controller.SignupReqBody'
       produces:
       - application/json
       responses:
