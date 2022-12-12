@@ -27,6 +27,16 @@ func RandomString(n int) string {
 	return sb.String()
 }
 
+// RandomUser generate a random user name
+func RandomUser() string {
+	return RandomString(6)
+}
+
+// RandomPassword generate a random password of length 10
+func RandomPassword() string {
+	return RandomString(10)
+}
+
 // RandomEmail generate a random email string
 func RandomEmail() string {
 	var mailSb strings.Builder
