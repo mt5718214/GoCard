@@ -1,5 +1,12 @@
 definitions:
-  controller.SignupReqBody:
+  controller.loginReqBody:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  controller.signupReqBody:
     properties:
       checkPassword:
         type: string
@@ -56,18 +63,40 @@ paths:
       summary: PostFollowship by toipcId
       tags:
       - followship
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: verify user information and issue token
+      parameters:
+      - description: loginReqBody
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controller.loginReqBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"result": "JWT token"}'
+          schema:
+            type: string
+      summary: verify user information and issue token
+      tags:
+      - system
   /signup:
     post:
       consumes:
       - application/json
       description: User register
       parameters:
-      - description: SignupReqBody
+      - description: signupReqBody
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/controller.SignupReqBody'
+          $ref: '#/definitions/controller.signupReqBody'
       produces:
       - application/json
       responses:
