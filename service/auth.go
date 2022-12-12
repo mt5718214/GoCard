@@ -45,66 +45,27 @@ func RegisterHandler(username, password, email string) (string, error) {
 	return "Create user success", nil
 }
 
-// AuthHandler godoc
-// @Summary			verify user information and issue token
-// @Schemes
-// @Description	verify user information and issue token
-// @Tags				system
-// @Accept			json
-// @Produce			json
-// @Param       request body loginReqBody true "loginReqBody"
-// @Success	  	200			{string}	json		"{"result": "JWT token"}"
-// @Router			/login [post]
-func AuthHandler(c *gin.Context) {
-	var (
-		userInfo loginReqBody
-		err      error
-	)
-	if err = c.BindJSON(&userInfo); err != nil {
-		log.Println("BindJSON error: ", err.Error())
-		c.JSON(400, nil)
-		return
-	}
-
-	email := strings.Trim(userInfo.Email, " ")
-	password := strings.Trim(userInfo.Password, " ")
-	if email == "" || password == "" {
-		c.JSON(400, gin.H{
-			"message": "field can't be empty",
-		})
-		return
-	}
-
-	userInfoFromDb, err := db.Queries.GetUserByEmail(c, email)
+func AuthHandler(email, password string) (string, error) {
+	var err error
+	userInfoFromDb, err := db.Queries.GetUserByEmail(context.Background(), email)
 	if err != nil {
 		log.Println("[Error] GetUserByEmail error: ", err.Error())
-		c.JSON(400, gin.H{
-			"message": "Email or password is wrong.",
-		})
-		return
+		return "", errors.New("email or password is wrong")
 	}
 
 	// check password hash string
 	if isMatch := util.CheckPasswordHash(userInfoFromDb.Password, password); !isMatch {
-		c.JSON(400, gin.H{
-			"message": "Email or password is wrong.",
-		})
-		return
+		return "", errors.New("email or password is wrong")
 	}
 
 	// sign JWT token and return to client
 	token, err := createJWT("token", userInfoFromDb.ID, userInfoFromDb.Name)
 	if err != nil {
-		fmt.Println("createJWT error: ", err.Error())
-		c.JSON(400, gin.H{
-			"token": "",
-		})
-		return
+		log.Println("createJWT error: ", err.Error())
+		return "", errors.New("something went wrong")
 	}
 
-	c.JSON(200, gin.H{
-		"token": token,
-	})
+	return token, nil
 }
 
 func JWTAuthMiddleware() func(c *gin.Context) {
