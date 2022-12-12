@@ -32,7 +32,7 @@ func RegisterHandler(c *gin.Context) {
 	err := c.BindJSON(&userInfoReqBody)
 	if err != nil {
 		log.Println("BindJSON error: ", err.Error())
-		c.JSON(400, nil)
+		c.JSON(http.StatusBadRequest, nil)
 		return
 	}
 
@@ -42,14 +42,14 @@ func RegisterHandler(c *gin.Context) {
 	checkPassword := strings.Trim(userInfoReqBody.CheckPassword, " ")
 
 	if username == "" || password == "" || email == "" || checkPassword == "" {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "field can't be empty",
 		})
 		return
 	}
 
 	if password != checkPassword {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "password and checkPassword is not equal",
 		})
 		return
@@ -60,6 +60,7 @@ func RegisterHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": err.Error(),
 		})
+		return
 	}
 	c.JSON(http.StatusCreated, gin.H{
 		"result": result,
