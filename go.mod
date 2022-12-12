@@ -7,8 +7,14 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/google/uuid v1.3.0
 	github.com/lib/pq v1.10.7
+	github.com/stretchr/testify v1.8.1
 	github.com/swaggo/swag v1.8.8
 	golang.org/x/crypto v0.3.0
+)
+
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 )
 
 require (
