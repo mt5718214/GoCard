@@ -1,3 +1,15 @@
+definitions:
+  api.userInfoReqBody:
+    properties:
+      checkPassword:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
@@ -44,6 +56,28 @@ paths:
       summary: PostFollowship by toipcId
       tags:
       - followship
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: User register
+      parameters:
+      - description: userInfoReqBody
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.userInfoReqBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: '{"result":"Create user success"}'
+          schema:
+            type: string
+      summary: User register
+      tags:
+      - system
 securityDefinitions:
   BearerAuth:
     in: header
