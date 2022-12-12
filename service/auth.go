@@ -1,6 +1,7 @@
-package api
+package service
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	db "gocard/db"
@@ -22,51 +23,8 @@ var (
 	mySigningKey = []byte("mySigningKey")
 )
 
-type signupReqBody struct {
-	Name          string
-	Email         string
-	Password      string
-	CheckPassword string
-}
-
-// RegisterHandler godoc
-// @Summary				 User register
-// @Schemes
-// @Description		 User register
-// @Tags					 system
-// @Accept				 json
-// @Produce				 json
-// @Param       	 request body userInfoReqBody true "userInfoReqBody"
-// @Success	  		 201			{string}	json		"{"result":"Create user success"}"
-// @Router				 /signup [post]
-func RegisterHandler(c *gin.Context) {
-	var userInfoReqBody signupReqBody
-	err := c.BindJSON(&userInfoReqBody)
-	if err != nil {
-		fmt.Println("BindJSON error: ", err.Error())
-		c.JSON(400, nil)
-		return
-	}
-
-	username := strings.Trim(userInfoReqBody.Name, " ")
-	password := strings.Trim(userInfoReqBody.Password, " ")
-	email := strings.Trim(userInfoReqBody.Email, " ")
-	checkPassword := strings.Trim(userInfoReqBody.CheckPassword, " ")
-
-	if username == "" || password == "" || email == "" || checkPassword == "" {
-		c.JSON(400, gin.H{
-			"message": "field can't be empty",
-		})
-		return
-	}
-
-	if password != checkPassword {
-		c.JSON(400, gin.H{
-			"message": "password and checkPassword is not equal",
-		})
-		return
-	}
-
+func RegisterHandler(username, password, email string) (string, error) {
+	var err error
 	arg := sqlc.PostUserParams{
 		Name:          username,
 		Password:      util.HashPassword(password),
@@ -75,24 +33,16 @@ func RegisterHandler(c *gin.Context) {
 		LastUpdatedBy: enum.Admin.AdminUuid(),
 	}
 
-	if _, err = db.Queries.PostUser(c, arg); err != nil {
+	if _, err = db.Queries.PostUser(context.Background(), arg); err != nil {
 		log.Print("[Error] PostUser error: ", err.Error())
 		if strings.Contains(err.Error(), "duplicate") {
-			c.JSON(400, gin.H{
-				"result": "Email is exist",
-			})
-			return
+			return "", errors.New("email is exist")
 		}
 
-		c.JSON(400, gin.H{
-			"result": "PostUser error",
-		})
-		return
+		return "", errors.New("PostUser error")
 	}
 
-	c.JSON(201, gin.H{
-		"result": "Create user success",
-	})
+	return "Create user success", nil
 }
 
 func AuthHandler(c *gin.Context) {

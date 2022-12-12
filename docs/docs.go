@@ -100,12 +100,12 @@ const docTemplate = `{
                 "summary": "User register",
                 "parameters": [
                     {
-                        "description": "userInfoReqBody",
+                        "description": "SignupReqBody",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.userInfoReqBody"
+                            "$ref": "#/definitions/controller.SignupReqBody"
                         }
                     }
                 ],
@@ -121,7 +121,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "api.userInfoReqBody": {
+        "controller.SignupReqBody": {
             "type": "object",
             "properties": {
                 "checkPassword": {

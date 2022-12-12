@@ -1,14 +1,14 @@
 package route
 
 import (
-	"gocard/api"
+	"gocard/service"
 
 	"github.com/gin-gonic/gin"
 )
 
 func FollowshipRouter(rg *gin.RouterGroup) {
-	gocards := rg.Group("/followship")
+	followship := rg.Group("/followship")
 
-	gocards.POST("/:topicId", api.PostFollowship)
-	gocards.DELETE("/:topicId", api.DeleteFollowship)
+	followship.POST("/:topicId", service.PostFollowship)
+	followship.DELETE("/:topicId", service.DeleteFollowship)
 }
