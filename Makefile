@@ -8,6 +8,9 @@ addplugin:
 createdb:
 	docker exec -it postgres13 createdb --username=gocard --owner=gocard gocard
 
+createtestdb:
+	docker exec -it postgres13 createdb --username=gocard --owner=gocard gocard_test && docker exec -it postgres13 psql -U gocard -d gocard_test -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";" && migrate -path db/migration -database "postgres://gocard:secret@localhost:5432/gocard_test?sslmode=disable" --verbose up
+
 dropdb:
 	docker exec -it postgres13 dropdb gocard
 
