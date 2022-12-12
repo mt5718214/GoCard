@@ -7,8 +7,8 @@ import (
 )
 
 func FollowshipRouter(rg *gin.RouterGroup) {
-	gocards := rg.Group("/followship")
+	followship := rg.Group("/followship")
 
-	gocards.POST("/:topicId", service.PostFollowship)
-	gocards.DELETE("/:topicId", service.DeleteFollowship)
+	followship.POST("/:topicId", service.PostFollowship)
+	followship.DELETE("/:topicId", service.DeleteFollowship)
 }
