@@ -34,7 +34,7 @@ services:
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     environment:
-      - PG_HOST=postgres
+      - PG_HOST=postgres13
       # - REDIS_HOST=redis
 
 # volumes:
