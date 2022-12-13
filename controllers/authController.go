@@ -109,6 +109,6 @@ func AuthHandler(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusBadRequest, gin.H{
-		"token": token,
+		"data": token,
 	})
 }
