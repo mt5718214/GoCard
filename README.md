@@ -1,5 +1,11 @@
 # GoCard
 
+## Contents
+- [Install golang-migration CLI](#install-golang-migration-cli-official-doc)
+- [Install sqlc](#install-sqlc-official-doc)
+- [Project init](#project-init)
+    - [generate swagger api doc](#download-swag-by-using)
+
 ## Install golang-migration CLI ([official doc](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate))
 ### MacOS
 
@@ -62,10 +68,23 @@ go install github.com/kyleconroy/sqlc/cmd/sqlc@latest
 go get github.com/kyleconroy/sqlc/cmd/sqlc
 ```
 
-# project init
+## project init
 ```
 1. make postgres
 2. make addplugin
 3. make migrateup
 4. go run .
+```
+### Download swag by using
+```sh
+$ go install github.com/swaggo/swag/cmd/swag@latest
+```
+### use Mac with zsh may need to export the GOPATH
+```
+# .zshrc file
+export PATH=$(go env GOPATH)/bin:$PATH
+```
+### generate api doc
+```sh
+make swag
 ```
