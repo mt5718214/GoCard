@@ -1,7 +1,7 @@
 package route
 
 import (
-	"gocard/api"
+	controller "gocard/controllers"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,5 +9,5 @@ import (
 func PostRouter(rg *gin.RouterGroup) {
 	posts := rg.Group("/posts")
 
-	posts.POST("/", api.Postposts)
+	posts.POST("/", controller.Postposts)
 }

@@ -1,9 +1,9 @@
-package api
+package controller
 
 import (
-	db "gocard/db"
-	sqlc "gocard/db/sqlc"
+	"gocard/service"
 	"log"
+	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -20,10 +20,10 @@ type postPostsBodyParmas struct {
 // @Summary 	create a new post
 // @Schemes
 // @Description create a new post
-// @Tags 			posts
+// @Tags 		posts
 // @Accept 		json
 // @Produce 	json
-// @Param 		request body db.PostpostsParams true "PostpostsParams"
+// @Param 		request body postPostsBodyParmas true "postPostsBodyParmas"
 // @Success 	201
 // @Router 		/posts/ [post]
 // @Security 	BearerAuth
@@ -34,22 +34,22 @@ func Postposts(c *gin.Context) {
 	)
 	if err = c.BindJSON(&requestBody); err != nil {
 		log.Println("[Error] Postposts bindJson error: ", err.Error())
-		c.JSON(400, gin.H{
-			"result": "Params error",
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Params error",
 		})
 		return
 	}
 
 	if requestBody.Content = strings.Trim(requestBody.Content, " "); requestBody.Content == "" {
-		c.JSON(400, gin.H{
-			"result": "Content required",
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Content required",
 		})
 		return
 	}
 
 	if requestBody.Title = strings.Trim(requestBody.Title, " "); requestBody.Title == "" {
-		c.JSON(400, gin.H{
-			"result": "Title required",
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Title required",
 		})
 		return
 	}
@@ -58,30 +58,19 @@ func Postposts(c *gin.Context) {
 	ownerId, err := uuid.Parse(userId)
 	if err != nil {
 		log.Println("uuid parse error: ", err.Error())
-		c.JSON(400, gin.H{
-			"result": "Invalid uuid",
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid uuid",
 		})
 		return
 	}
 
-	// TODO: check topicId is exist or not.
-	arg := sqlc.PostpostsParams{
-		OwnerID:       ownerId,
-		TopicID:       requestBody.TopicId,
-		Content:       requestBody.Content,
-		Title:         requestBody.Title,
-		CreatedBy:     ownerId,
-		LastUpdatedBy: ownerId,
-	}
-
-	err = db.Queries.Postposts(c, arg)
+	err = service.Postposts(ownerId, requestBody.TopicId, requestBody.Title, requestBody.Content)
 	if err != nil {
 		log.Println("[Error] Postposts error: ", err.Error())
-		c.JSON(400, gin.H{
-			"result": "Postposts error",
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
 		})
 		return
 	}
-
-	c.JSON(201, nil)
+	c.JSON(http.StatusCreated, nil)
 }
