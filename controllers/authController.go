@@ -1,7 +1,6 @@
 package controller
 
 import (
-	sqlc "gocard/db/sqlc"
 	"gocard/service"
 	"log"
 	"net/http"
@@ -15,6 +14,11 @@ type signupReqBody struct {
 	Email         string
 	Password      string
 	CheckPassword string
+}
+
+type loginReqBody struct {
+	Email    string
+	Password string
 }
 
 // RegisterHandler godoc
@@ -63,26 +67,48 @@ func RegisterHandler(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{
-		"result": result,
+		"message": result,
 	})
 }
 
+// AuthHandler godoc
+// @Summary			verify user information and issue token
+// @Schemes
+// @Description	verify user information and issue token
+// @Tags				system
+// @Accept			json
+// @Produce			json
+// @Param       request body loginReqBody true "loginReqBody"
+// @Success	  	200			{string}	json		"{"result": "JWT token"}"
+// @Router			/login [post]
 func AuthHandler(c *gin.Context) {
-	var userInfo sqlc.User
-	err := c.BindJSON(&userInfo)
-	if err != nil {
+	var (
+		userInfo loginReqBody
+		err      error
+	)
+	if err = c.BindJSON(&userInfo); err != nil {
 		log.Println("BindJSON error: ", err.Error())
 		c.JSON(400, nil)
 		return
 	}
 
-	username := strings.Trim(userInfo.Name, " ")
+	email := strings.Trim(userInfo.Email, " ")
 	password := strings.Trim(userInfo.Password, " ")
-	if username == "" || password == "" {
+	if email == "" || password == "" {
 		c.JSON(400, gin.H{
 			"message": "field can't be empty",
 		})
 		return
 	}
-	// service.AuthHandler(c, userInfo)
+
+	token, err := service.AuthHandler(email, password)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusBadRequest, gin.H{
+		"data": token,
+	})
 }

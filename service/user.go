@@ -1,12 +1,10 @@
 package service
 
 import (
-	"fmt"
 	db "gocard/db"
 	"log"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func ListUsers(c *gin.Context) {
@@ -21,26 +19,28 @@ func ListUsers(c *gin.Context) {
 	})
 }
 
-func GetUser(c *gin.Context) {
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Println(r)
-			c.JSON(400, gin.H{
-				"result": "UUID format error",
-			})
-		}
-	}()
-	id := uuid.MustParse(c.Param("id"))
+// TODO: replace db.Queries.GetUser with db.Queries.GetUserById
 
-	rows, err := db.Queries.GetUser(c, id)
+// func GetUser(c *gin.Context) {
+// 	defer func() {
+// 		if r := recover(); r != nil {
+// 			fmt.Println(r)
+// 			c.JSON(400, gin.H{
+// 				"result": "UUID format error",
+// 			})
+// 		}
+// 	}()
+// 	id := uuid.MustParse(c.Param("id"))
 
-	if err != nil {
-		c.JSON(400, gin.H{
-			"result": "something went wrong...",
-		})
-	} else {
-		c.JSON(200, gin.H{
-			"result": rows,
-		})
-	}
-}
+// 	rows, err := db.Queries.GetUser(c, id)
+
+// 	if err != nil {
+// 		c.JSON(400, gin.H{
+// 			"result": "something went wrong...",
+// 		})
+// 	} else {
+// 		c.JSON(200, gin.H{
+// 			"result": rows,
+// 		})
+// 	}
+// }

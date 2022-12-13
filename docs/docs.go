@@ -85,6 +85,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/login": {
+            "post": {
+                "description": "verify user information and issue token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "verify user information and issue token",
+                "parameters": [
+                    {
+                        "description": "loginReqBody",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.loginReqBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"result\": \"JWT token\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/signup": {
             "post": {
                 "description": "User register",
@@ -100,12 +134,12 @@ const docTemplate = `{
                 "summary": "User register",
                 "parameters": [
                     {
-                        "description": "SignupReqBody",
+                        "description": "signupReqBody",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.SignupReqBody"
+                            "$ref": "#/definitions/controller.signupReqBody"
                         }
                     }
                 ],
@@ -121,7 +155,18 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "controller.SignupReqBody": {
+        "controller.loginReqBody": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "controller.signupReqBody": {
             "type": "object",
             "properties": {
                 "checkPassword": {

@@ -45,56 +45,27 @@ func RegisterHandler(username, password, email string) (string, error) {
 	return "Create user success", nil
 }
 
-func AuthHandler(c *gin.Context) {
-	var userInfo sqlc.User
-	err := c.BindJSON(&userInfo)
+func AuthHandler(email, password string) (string, error) {
+	var err error
+	userInfoFromDb, err := db.Queries.GetUserByEmail(context.Background(), email)
 	if err != nil {
-		fmt.Println("BindJSON error: ", err.Error())
-		c.JSON(400, nil)
-		return
-	}
-
-	username := strings.Trim(userInfo.Name, " ")
-	password := strings.Trim(userInfo.Password, " ")
-	if username == "" || password == "" {
-		c.JSON(400, gin.H{
-			"message": "field can't be empty",
-		})
-		return
-	}
-
-	row := db.SqlDB.QueryRow("SELECT id, username, password FROM users WHERE username = ?", username)
-	err = row.Scan(&userInfo.ID, &userInfo.Name, &userInfo.Password)
-	if err != nil {
-		fmt.Println("QueryRow error: ", err.Error())
-		c.JSON(400, gin.H{
-			"message": "Username or password is wrong.",
-		})
-		return
+		log.Println("[Error] GetUserByEmail error: ", err.Error())
+		return "", errors.New("email or password is wrong")
 	}
 
 	// check password hash string
-	isMatch := util.CheckPasswordHash(userInfo.Password, password)
-	if !isMatch {
-		c.JSON(400, gin.H{
-			"message": "Username or password is wrong.",
-		})
-		return
+	if isMatch := util.CheckPasswordHash(userInfoFromDb.Password, password); !isMatch {
+		return "", errors.New("email or password is wrong")
 	}
 
 	// sign JWT token and return to client
-	token, err := createJWT("token", userInfo.ID, userInfo.Name)
+	token, err := createJWT("token", userInfoFromDb.ID, userInfoFromDb.Name)
 	if err != nil {
-		fmt.Println("createJWT error: ", err.Error())
-		c.JSON(400, gin.H{
-			"token": "",
-		})
-		return
+		log.Println("createJWT error: ", err.Error())
+		return "", errors.New("something went wrong")
 	}
 
-	c.JSON(200, gin.H{
-		"token": token,
-	})
+	return token, nil
 }
 
 func JWTAuthMiddleware() func(c *gin.Context) {
@@ -119,7 +90,7 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 			return
 		}
 
-		cm, err := ParseToken(part[1])
+		cm, err := parseToken(part[1])
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Invalid Token",
@@ -167,7 +138,7 @@ func createJWT(sub string, userId uuid.UUID, username string) (string, error) {
 	return ss, err
 }
 
-func ParseToken(tokenString string) (jwt.MapClaims, error) {
+func parseToken(tokenString string) (jwt.MapClaims, error) {
 	if strings.Trim(tokenString, " ") == "" {
 		return nil, errors.New("invalid token")
 	}
