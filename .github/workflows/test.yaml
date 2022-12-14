@@ -1,7 +1,7 @@
 name: Test
 run-name: run unit test
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   Test:
@@ -35,5 +35,5 @@ jobs:
           docker-compose -f docker-compose.test.yml run --rm gocard make sqlc
           sleep 5
           docker exec postgres13 psql -U gocard -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
-          migrate -path db/migration -database "postgres://${{ secrets.DBUSER }}:${{ secrets.DBPASSWORD }}@localhost:5432/gocard?sslmode=disable" --verbose up
+          migrate -path db/migration -database "postgres://${{ secrets.DBUSER }}:${{ secrets.DBPASSWORD }}@localhost:5432/gocard?sslmode=disable" up
           make test
