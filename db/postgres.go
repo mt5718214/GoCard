@@ -19,10 +19,10 @@ func init() {
 	if err := godotenv.Load(".env", ".env.test"); err != nil {
 		log.Print("Error loading all .env file")
 	}
-	db := os.Getenv("db")
-	dbHost := os.Getenv("dbHost")
-	dbUser := os.Getenv("dbUser")
-	dbPassword := os.Getenv("dbPassword")
+	db := os.Getenv("DB")
+	dbHost := os.Getenv("DBHOST")
+	dbUser := os.Getenv("DBUSER")
+	dbPassword := os.Getenv("DBPASSWORD")
 	dbSource := fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable", dbUser, dbPassword, dbHost, db)
 
 	// db connection
