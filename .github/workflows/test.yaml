@@ -36,4 +36,4 @@ jobs:
           sleep 5
           docker exec postgres13 psql -U gocard -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
           migrate -path db/migration -database "postgres://${{ secrets.DBUSER }}:${{ secrets.DBPASSWORD }}@localhost:5432/gocard?sslmode=disable" up
-          make test
+          go test -cover ./...
