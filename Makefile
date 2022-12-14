@@ -3,13 +3,13 @@ postgres:
 
 # https://stackoverflow.com/questions/26992821/postgresql-how-to-insert-null-value-to-uuid
 addplugin:
-	docker exec -it postgres13 psql -U gocard -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
+	docker exec postgres13 psql -U gocard -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
 
 createdb:
-	docker exec -it postgres13 createdb --username=gocard --owner=gocard gocard
+	docker exec postgres13 createdb --username=gocard --owner=gocard gocard
 
 dropdb:
-	docker exec -it postgres13 dropdb gocard
+	docker exec postgres13 dropdb --username=gocard gocard
 
 migrateup:
 	migrate -path db/migration -database "postgres://gocard:secret@localhost:5432/gocard?sslmode=disable" --verbose up
