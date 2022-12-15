@@ -27,7 +27,11 @@ func TestMain(m *testing.M) {
 
 	conn, err := sql.Open(dbDrive, viper.GetString("TEST_DB_SOURCE"))
 	if err != nil {
-		log.Fatal("cannot connect to db:", err.Error())
+		log.Fatal("DB連線資訊有誤請再次確認: ", err.Error())
+	}
+	if err := conn.Ping(); err != nil {
+		log.Println("開啟 POSTGRES 連線發生錯誤，原因為：", err.Error())
+		log.Fatal("db connect error: ", err.Error())
 	}
 
 	testQueries = New(conn)
