@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: postgres13
+    image: postgres:13
+    # volumes:
+    #   - postgres_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: gocard
+      POSTGRES_PASSWORD: secret
+    env_file:
+      - .env
+    ports:
+      - 5432:5432
+
+  # redis:
+  #   container_name: redis
+  #   image: redis:6-alpine
+  #   volumes:
+  #     - redis_volume:/data
+  #   ports:
+  #     - 6379:6379
+
+  gocard:
+    container_name: gocard
+    depends_on:
+      - postgres
+      # - redis
+    build:
+      context: ./
+    env_file:
+      - .env
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    environment:
+      - PG_HOST=postgres13
+      # - REDIS_HOST=redis
+
+# volumes:
+#   postgres_volume:
+#   redis_volume:
