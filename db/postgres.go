@@ -5,29 +5,25 @@ import (
 	"fmt"
 	sqlcDb "gocard/db/sqlc"
 	"log"
-	"os"
-
-	"github.com/joho/godotenv"
 
 	_ "github.com/lib/pq"
+	"github.com/spf13/viper"
 )
 
 var SqlDB *sql.DB
 var Queries *sqlcDb.Queries
 
 func init() {
-	if err := godotenv.Load(".env", ".env.test"); err != nil {
-		log.Print("Error loading all .env file")
+	var err error
+
+	viper.SetConfigFile("../.env")
+	// func ReadInConfig Find and read the config file
+	if err = viper.ReadInConfig(); err != nil {
+		log.Fatal("fatal error config file: ", err.Error())
 	}
-	db := os.Getenv("DB")
-	dbHost := os.Getenv("DBHOST")
-	dbUser := os.Getenv("DBUSER")
-	dbPassword := os.Getenv("DBPASSWORD")
-	dbSource := fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable", dbUser, dbPassword, dbHost, db)
 
 	// db connection
-	var err error
-	SqlDB, err = sql.Open("postgres", dbSource)
+	SqlDB, err = sql.Open("postgres", viper.GetString("DB_SOURCE"))
 	if err != nil {
 		fmt.Println("DB連線資訊有誤請再次確認")
 	}
