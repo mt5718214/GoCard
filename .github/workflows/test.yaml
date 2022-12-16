@@ -21,10 +21,8 @@ jobs:
         uses: SpicyPizza/create-envfile@v1.2
         with:
           envkey_SERVER_PORT: 8080
-          envkey_DB: gocard
-          envkey_DBHost: postgres13
-          envkey_DBUSER: ${{ secrets.DBUSER }}
-          envkey_DBPASSWORD: ${{ secrets.DBPASSWORD }}
+          envkey_DB_SOURCE: ${{ secrets.DB_SOURCE }}
+          envkey_TEST_DB_SOURCE: ${{ secrets.TEST_DB_SOURCE }}
           directory: ./
           file_name: .env
           fail_on_empty: false
@@ -34,6 +32,6 @@ jobs:
           docker-compose -f docker-compose.test.yml build
           docker-compose -f docker-compose.test.yml run --rm gocard make sqlc
           sleep 5
-          docker exec postgres13 psql -U gocard -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
-          migrate -path db/migration -database "postgres://${{ secrets.DBUSER }}:${{ secrets.DBPASSWORD }}@localhost:5432/gocard?sslmode=disable" up
+          docker exec postgres13 psql -U gocard -d gocard_test -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
+          migrate -path db/migration -database ${{ secrets.TEST_DB_SOURCE }} up
           go test -cover ./...
