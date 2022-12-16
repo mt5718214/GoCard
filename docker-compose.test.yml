@@ -9,6 +9,7 @@ services:
     environment:
       POSTGRES_USER: gocard
       POSTGRES_PASSWORD: secret
+      POSTGRES_DB: gocard_test
     env_file:
       - .env
     ports:
