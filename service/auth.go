@@ -164,7 +164,6 @@ func parseToken(tokenString string) (jwt.MapClaims, error) {
 	}
 
 	if claim, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		fmt.Println("claim", claim)
 		return claim, nil
 	}
 
