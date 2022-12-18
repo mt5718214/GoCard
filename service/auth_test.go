@@ -21,7 +21,8 @@ func TestRegisterHandler(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "Create user success", result)
 
-	user, _ := db.Queries.GetUserByEmail(context.Background(), email)
+	user, err := db.Queries.GetUserByEmail(context.Background(), email)
+	require.NoError(t, err)
 	require.Equal(t, username, user.Name)
 	require.Equal(t, email, user.Email)
 
