@@ -24,7 +24,7 @@ func main() {
 	if os.Getenv("ENV") == "PROD" {
 		ENV = os.Getenv("ENV")
 	}
-	db.NewDB(ENV)
+	db.NewDB(ENV, "./")
 
 	server := initRouter()
 	// By default it serves on :8080 unless a PORT environment variable was defined.

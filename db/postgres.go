@@ -13,10 +13,11 @@ import (
 var SqlDB *sql.DB
 var Queries *sqlcDb.Queries
 
-func NewDB(env string) {
+func NewDB(env, path string) {
 	var err error
 
-	viper.SetConfigFile("../.env")
+	path = fmt.Sprintf("%s.env", path)
+	viper.SetConfigFile(path)
 	// func ReadInConfig Find and read the config file
 	if err = viper.ReadInConfig(); err != nil {
 		log.Fatal("fatal error config file: ", err.Error())
