@@ -3,6 +3,7 @@ package main
 import (
 	db "gocard/db"
 	docs "gocard/docs"
+	"os"
 )
 
 // @securityDefinitions.apikey BearerAuth
@@ -18,6 +19,13 @@ func main() {
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
 	defer db.SqlDB.Close()
+
+	ENV := "DEV"
+	if os.Getenv("ENV") == "PROD" {
+		ENV = os.Getenv("ENV")
+	}
+	db.NewDB(ENV)
+
 	server := initRouter()
 	// By default it serves on :8080 unless a PORT environment variable was defined.
 	// router.Run(":3000") for a hard coded port

@@ -13,7 +13,7 @@ import (
 var SqlDB *sql.DB
 var Queries *sqlcDb.Queries
 
-func init() {
+func NewDB(env string) {
 	var err error
 
 	viper.SetConfigFile("../.env")
@@ -22,8 +22,17 @@ func init() {
 		log.Fatal("fatal error config file: ", err.Error())
 	}
 
+	dbSource := viper.GetString("DB_SOURCE")
+	switch env {
+	case "DEV":
+	case "TEST":
+		dbSource = viper.GetString("TEST_DB_SOURCE")
+	case "PROD":
+		dbSource = viper.GetString("PROD_DB_SOURCE")
+	}
+
 	// db connection
-	SqlDB, err = sql.Open("postgres", viper.GetString("DB_SOURCE"))
+	SqlDB, err = sql.Open("postgres", dbSource)
 	if err != nil {
 		fmt.Println("DB連線資訊有誤請再次確認")
 	}
