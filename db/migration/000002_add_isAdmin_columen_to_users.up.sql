@@ -1,0 +1,1 @@
+ALTER TABLE users ADD is_admin smallint NOT NULL DEFAULT 0;
