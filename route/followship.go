@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func FollowshipRouter(rg *gin.RouterGroup) {
+func followshipRouter(rg *gin.RouterGroup) {
 	followship := rg.Group("/followship")
 
 	followship.POST("/:topicId", service.PostFollowship)

@@ -9,14 +9,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type signupReqBody struct {
+type SignupReqBody struct {
 	Name          string
 	Email         string
 	Password      string
 	CheckPassword string
 }
 
-type loginReqBody struct {
+type LoginReqBody struct {
 	Email    string
 	Password string
 }
@@ -32,7 +32,7 @@ type loginReqBody struct {
 // @Success	  		 201			{string}	json		"{"result":"Create user success"}"
 // @Router				 /signup [post]
 func RegisterHandler(c *gin.Context) {
-	var userInfoReqBody signupReqBody
+	var userInfoReqBody SignupReqBody
 	err := c.BindJSON(&userInfoReqBody)
 	if err != nil {
 		log.Println("BindJSON error: ", err.Error())
@@ -83,7 +83,7 @@ func RegisterHandler(c *gin.Context) {
 // @Router			/login [post]
 func AuthHandler(c *gin.Context) {
 	var (
-		userInfo loginReqBody
+		userInfo LoginReqBody
 		err      error
 	)
 	if err = c.BindJSON(&userInfo); err != nil {
@@ -108,7 +108,7 @@ func AuthHandler(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusBadRequest, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"data": token,
 	})
 }

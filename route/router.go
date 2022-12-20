@@ -1,8 +1,7 @@
-package main
+package route
 
 import (
 	controllers "gocard/controllers"
-	route "gocard/route"
 	service "gocard/service"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +9,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func initRouter() *gin.Engine {
+func InitRouter() *gin.Engine {
 	server := gin.Default()
 	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
@@ -24,7 +23,7 @@ func initRouter() *gin.Engine {
 		v1.Use(service.JWTAuthMiddleware())
 
 		// route
-		route.FollowshipRouter(v1)
+		followshipRouter(v1)
 	}
 
 	return server
