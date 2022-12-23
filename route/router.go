@@ -2,7 +2,7 @@ package route
 
 import (
 	controllers "gocard/controllers"
-	service "gocard/service"
+	"gocard/service"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -24,6 +24,10 @@ func InitRouter() *gin.Engine {
 
 		// route
 		followshipRouter(v1)
+
+		// admin route
+		adminRouter := v1.Group("/admin")
+		topicRouter(adminRouter)
 	}
 
 	return server

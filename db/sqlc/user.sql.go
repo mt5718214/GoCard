@@ -36,7 +36,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEm
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, name, email, password, created_by, created_at, last_updated_by, last_updated_at FROM users
+SELECT id, name, email, password, created_by, created_at, last_updated_by, last_updated_at, is_admin FROM users
 ORDER BY created_at
 `
 
@@ -58,6 +58,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 			&i.CreatedAt,
 			&i.LastUpdatedBy,
 			&i.LastUpdatedAt,
+			&i.IsAdmin,
 		); err != nil {
 			return nil, err
 		}
@@ -85,7 +86,7 @@ INSERT INTO users (
   $3,
   $4,
   $5
-) RETURNING id, name, email, password, created_by, created_at, last_updated_by, last_updated_at
+) RETURNING id, name, email, password, created_by, created_at, last_updated_by, last_updated_at, is_admin
 `
 
 type PostUserParams struct {
@@ -114,6 +115,7 @@ func (q *Queries) PostUser(ctx context.Context, arg PostUserParams) (User, error
 		&i.CreatedAt,
 		&i.LastUpdatedBy,
 		&i.LastUpdatedAt,
+		&i.IsAdmin,
 	)
 	return i, err
 }
