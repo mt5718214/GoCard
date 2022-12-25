@@ -28,7 +28,7 @@ type LoginReqBody struct {
 // @Tags					 system
 // @Accept				 json
 // @Produce				 json
-// @Param       	 request body signupReqBody true "signupReqBody"
+// @Param       	 request body SignupReqBody true "signupReqBody"
 // @Success	  		 201			{string}	json		"{"result":"Create user success"}"
 // @Router				 /signup [post]
 func RegisterHandler(c *gin.Context) {
@@ -78,7 +78,7 @@ func RegisterHandler(c *gin.Context) {
 // @Tags				system
 // @Accept			json
 // @Produce			json
-// @Param       request body loginReqBody true "loginReqBody"
+// @Param       request body LoginReqBody true "loginReqBody"
 // @Success	  	200			{string}	json		"{"result": "JWT token"}"
 // @Router			/login [post]
 func AuthHandler(c *gin.Context) {

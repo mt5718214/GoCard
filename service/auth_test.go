@@ -8,7 +8,6 @@ import (
 	"gocard/util"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 )
 
@@ -45,9 +44,6 @@ func TestAuthHandler(t *testing.T) {
 	token, err := AuthHandler(user.Email, password)
 	require.NoError(t, err)
 
-	claim, err := parseToken(token)
+	_, err = util.ParseToken(token)
 	require.NoError(t, err)
-	require.Equal(t, claim["sub"], "token")
-	require.Equal(t, claim["jti"], uuid.UUID.String(user.ID))
-	require.True(t, claim.VerifyAudience(user.Name, true))
 }

@@ -2,7 +2,7 @@ package route
 
 import (
 	controllers "gocard/controllers"
-	service "gocard/service"
+	"gocard/service"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -24,6 +24,12 @@ func InitRouter() *gin.Engine {
 
 		// route
 		followshipRouter(v1)
+
+		// Admin route: the following route will verify isAdmin field
+		adminRouter := v1.Group("/admin")
+		adminRouter.Use(service.AuthAdminMiddleware())
+
+		topicRouter(adminRouter)
 	}
 
 	return server

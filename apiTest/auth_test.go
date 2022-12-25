@@ -53,7 +53,7 @@ func TestRegisterHandler(t *testing.T) {
 
 func TestAuthHandler(t *testing.T) {
 	password := util.RandomPassword()
-	user := createRandomUser(t, password)
+	user := createRandomUser(t, password, false)
 	arg := authCtrl.LoginReqBody{
 		Email:    user.Email,
 		Password: password,

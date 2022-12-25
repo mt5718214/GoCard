@@ -1,3 +1,6 @@
+# Variable
+filename ?= ""
+
 postgres:
 	docker run --name postgres13 -e POSTGRES_USER=gocard -e POSTGRES_PASSWORD=secret -p 5432:5432 -d postgres:13
 
@@ -10,6 +13,9 @@ createdb:
 
 dropdb:
 	docker exec postgres13 dropdb --username=gocard gocard
+
+createmigrate:
+	migrate create -ext sql -dir ./db/migration -seq $(filename)
 
 migrateup:
 	migrate -path db/migration -database "postgres://gocard:secret@localhost:5432/gocard?sslmode=disable" --verbose up
@@ -26,4 +32,4 @@ test:
 swag:
 	swag init
 
-.PHONY: postgres addplugin createdb dropdb migrateup migratedown sqlc test swag
+.PHONY: postgres addplugin createdb dropdb migrateup migratedown sqlc test swag createmigrate

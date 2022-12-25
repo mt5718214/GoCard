@@ -12,7 +12,7 @@ import (
 )
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, name, email, password FROM users
+SELECT id, name, email, password, is_admin FROM users
 WHERE email = $1 LIMIT 1
 `
 
@@ -21,6 +21,7 @@ type GetUserByEmailRow struct {
 	Name     string    `json:"name"`
 	Email    string    `json:"email"`
 	Password string    `json:"password"`
+	IsAdmin  int16     `json:"is_admin"`
 }
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error) {
@@ -31,12 +32,13 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEm
 		&i.Name,
 		&i.Email,
 		&i.Password,
+		&i.IsAdmin,
 	)
 	return i, err
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, name, email, password, created_by, created_at, last_updated_by, last_updated_at FROM users
+SELECT id, name, email, password, created_by, created_at, last_updated_by, last_updated_at, is_admin FROM users
 ORDER BY created_at
 `
 
@@ -58,6 +60,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 			&i.CreatedAt,
 			&i.LastUpdatedBy,
 			&i.LastUpdatedAt,
+			&i.IsAdmin,
 		); err != nil {
 			return nil, err
 		}
@@ -78,14 +81,16 @@ INSERT INTO users (
   email,
   password,
   created_by,
-  last_updated_by
+  last_updated_by,
+  is_admin
 ) VALUES (
   $1,
   $2,
   $3,
   $4,
-  $5
-) RETURNING id, name, email, password, created_by, created_at, last_updated_by, last_updated_at
+  $5,
+  $6
+) RETURNING id, name, email, password, created_by, created_at, last_updated_by, last_updated_at, is_admin
 `
 
 type PostUserParams struct {
@@ -94,6 +99,7 @@ type PostUserParams struct {
 	Password      string    `json:"password"`
 	CreatedBy     uuid.UUID `json:"created_by"`
 	LastUpdatedBy uuid.UUID `json:"last_updated_by"`
+	IsAdmin       int16     `json:"is_admin"`
 }
 
 func (q *Queries) PostUser(ctx context.Context, arg PostUserParams) (User, error) {
@@ -103,6 +109,7 @@ func (q *Queries) PostUser(ctx context.Context, arg PostUserParams) (User, error
 		arg.Password,
 		arg.CreatedBy,
 		arg.LastUpdatedBy,
+		arg.IsAdmin,
 	)
 	var i User
 	err := row.Scan(
@@ -114,6 +121,7 @@ func (q *Queries) PostUser(ctx context.Context, arg PostUserParams) (User, error
 		&i.CreatedAt,
 		&i.LastUpdatedBy,
 		&i.LastUpdatedAt,
+		&i.IsAdmin,
 	)
 	return i, err
 }

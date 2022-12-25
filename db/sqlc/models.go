@@ -76,4 +76,5 @@ type User struct {
 	CreatedAt     time.Time `json:"created_at"`
 	LastUpdatedBy uuid.UUID `json:"last_updated_by"`
 	LastUpdatedAt time.Time `json:"last_updated_at"`
+	IsAdmin       int16     `json:"is_admin"`
 }
