@@ -25,8 +25,10 @@ func InitRouter() *gin.Engine {
 		// route
 		followshipRouter(v1)
 
-		// admin route
+		// Admin route: the following route will verify isAdmin field
 		adminRouter := v1.Group("/admin")
+		adminRouter.Use(service.AuthAdminMiddleware())
+
 		topicRouter(adminRouter)
 	}
 

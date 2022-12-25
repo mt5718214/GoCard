@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	db "gocard/db"
 	sqlc "gocard/db/sqlc"
 	enum "gocard/enum"
@@ -93,6 +94,27 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 		// Store Account info into Context
 		// After that, we can get userInfo from c.GetStringMap("userInfo")
 		c.Set("userInfo", cm["UserInfo"])
+
+		c.Next()
+	}
+}
+
+func AuthAdminMiddleware() func(c *gin.Context) {
+	return func(c *gin.Context) {
+		userInfo := c.GetStringMap("userInfo")
+		fmt.Println(userInfo)
+		isAdminFloat, ok := userInfo["IsAdmin"].(float64)
+		if !ok {
+			c.JSON(http.StatusInternalServerError, nil)
+			c.Abort()
+			return
+		}
+
+		if int(isAdminFloat) != 1 {
+			c.JSON(http.StatusForbidden, nil)
+			c.Abort()
+			return
+		}
 
 		c.Next()
 	}
