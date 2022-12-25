@@ -45,7 +45,7 @@ func TestAuthHandler(t *testing.T) {
 	token, err := AuthHandler(user.Email, password)
 	require.NoError(t, err)
 
-	claim, err := parseToken(token)
+	claim, err := util.ParseToken(token)
 	require.NoError(t, err)
 	require.Equal(t, claim["sub"], "token")
 	require.Equal(t, claim["jti"], uuid.UUID.String(user.ID))
