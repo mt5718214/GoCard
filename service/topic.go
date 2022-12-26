@@ -1,6 +1,7 @@
 package service
 
 import (
+	"database/sql"
 	"gocard/db"
 	sqlc "gocard/db/sqlc"
 	"gocard/enum"
@@ -8,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type postTopicsReq struct {
@@ -51,4 +53,63 @@ func PostTopics(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, nil)
+}
+
+type updateTopicReq struct {
+	TopicID   string `uri:"topicID" binding:"uuid"`
+	TopicName string `json:"topicName"`
+}
+
+// UpdateTopic  godoc
+// @Summary     update topic name
+// @Schemes
+// @Description	update topic name
+// @Tags        topic
+// @Accept      json
+// @Produce     json
+// @Param       topicID path string true "topicID(uuid)"
+// @Param       request body updateTopicReq true "topicName"
+// @Success     204
+// @Router      /admin/topics/:topicId [put]
+// @Security    BearerAuth
+func UpdateTopic(c *gin.Context) {
+	var (
+		req updateTopicReq
+		err error
+	)
+	if err = c.ShouldBindUri(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "invalid uuid",
+		})
+		return
+	}
+	if err = c.ShouldBindJSON(&req); req.TopicName == "" || err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "invalid topicName",
+		})
+		return
+	}
+
+	id, _ := uuid.Parse(req.TopicID)
+	arg := sqlc.UpdateTopicParams{
+		TopicName: req.TopicName,
+		ID:        id,
+	}
+
+	_, err = db.Queries.UpdateTopic(c, arg)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "topicId is not exist",
+			})
+			return
+		}
+		log.Println("[Error] UpdateTopic error: ", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "updateTopic err",
+		})
+		return
+	}
+
+	c.JSON(http.StatusNoContent, nil)
 }

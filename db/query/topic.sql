@@ -8,3 +8,9 @@ INSERT INTO topics (
     $2,
     $3
 );
+
+-- name: UpdateTopic :one
+UPDATE topics 
+SET topic_name = $1
+WHERE id = $2
+RETURNING id, topic_name;

@@ -33,3 +33,27 @@ func (q *Queries) PostTopics(ctx context.Context, arg PostTopicsParams) error {
 	_, err := q.db.ExecContext(ctx, postTopics, arg.TopicName, arg.CreatedBy, arg.LastUpdatedBy)
 	return err
 }
+
+const updateTopic = `-- name: UpdateTopic :one
+UPDATE topics 
+SET topic_name = $1
+WHERE id = $2
+RETURNING id, topic_name
+`
+
+type UpdateTopicParams struct {
+	TopicName string    `json:"topic_name"`
+	ID        uuid.UUID `json:"id"`
+}
+
+type UpdateTopicRow struct {
+	ID        uuid.UUID `json:"id"`
+	TopicName string    `json:"topic_name"`
+}
+
+func (q *Queries) UpdateTopic(ctx context.Context, arg UpdateTopicParams) (UpdateTopicRow, error) {
+	row := q.db.QueryRowContext(ctx, updateTopic, arg.TopicName, arg.ID)
+	var i UpdateTopicRow
+	err := row.Scan(&i.ID, &i.TopicName)
+	return i, err
+}
