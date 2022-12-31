@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const postTopics = `-- name: PostTopics :exec
+const postTopics = `-- name: PostTopics :one
 INSERT INTO topics (
     topic_name,
     created_by,
@@ -20,7 +20,7 @@ INSERT INTO topics (
     $1,
     $2,
     $3
-)
+) RETURNING id
 `
 
 type PostTopicsParams struct {
@@ -29,9 +29,11 @@ type PostTopicsParams struct {
 	LastUpdatedBy uuid.UUID `json:"last_updated_by"`
 }
 
-func (q *Queries) PostTopics(ctx context.Context, arg PostTopicsParams) error {
-	_, err := q.db.ExecContext(ctx, postTopics, arg.TopicName, arg.CreatedBy, arg.LastUpdatedBy)
-	return err
+func (q *Queries) PostTopics(ctx context.Context, arg PostTopicsParams) (uuid.UUID, error) {
+	row := q.db.QueryRowContext(ctx, postTopics, arg.TopicName, arg.CreatedBy, arg.LastUpdatedBy)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
 }
 
 const updateTopic = `-- name: UpdateTopic :one

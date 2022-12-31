@@ -44,7 +44,7 @@ func PostTopics(c *gin.Context) {
 		CreatedBy:     enum.Admin.AdminUuid(),
 		LastUpdatedBy: enum.Admin.AdminUuid(),
 	}
-	if err := db.Queries.PostTopics(c, arg); err != nil {
+	if _, err := db.Queries.PostTopics(c, arg); err != nil {
 		log.Println("[Error] PostTopics error: ", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "postTopics error",
