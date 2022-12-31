@@ -2,15 +2,33 @@ package apitest
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"gocard/db"
+	sqlc "gocard/db/sqlc"
+	"gocard/enum"
 	"gocard/util"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 )
+
+func generateRandomTopic(t *testing.T) uuid.UUID {
+	arg := sqlc.PostTopicsParams{
+		TopicName:     util.RandomString(5),
+		CreatedBy:     enum.Admin.AdminUuid(),
+		LastUpdatedBy: enum.Admin.AdminUuid(),
+	}
+	id, err := db.Queries.PostTopics(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotZero(t, id)
+
+	return id
+}
 
 type postTopicsReq struct {
 	TopicName string
@@ -34,4 +52,30 @@ func TestPostTopics(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	require.Equal(t, http.StatusCreated, w.Code)
+}
+
+type UpdateTopicsReq struct {
+	TopicName string
+}
+
+func TestUpdateTopics(t *testing.T) {
+	topicId := generateRandomTopic(t)
+	user := createRandomUser(t, util.RandomPassword(), true)
+	token := generateTestToken(user.ID, user.Name, user.Email, user.IsAdmin)
+
+	arg := UpdateTopicsReq{
+		TopicName: util.RandomString(5),
+	}
+	jsonValue, err := json.Marshal(arg)
+	if err != nil {
+		log.Fatal("convert to json error: ", err.Error())
+	}
+
+	url := "/dev/api/v1/admin/topics/" + topicId.String()
+	req, _ := http.NewRequest("PUT", url, bytes.NewBuffer(jsonValue))
+	req.Header.Add("Authorization", "Bearer "+token)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	require.Equal(t, http.StatusNoContent, w.Code)
 }
