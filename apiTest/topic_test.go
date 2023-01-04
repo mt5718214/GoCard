@@ -18,16 +18,17 @@ import (
 )
 
 func generateRandomTopic(t *testing.T) uuid.UUID {
-	arg := sqlc.PostTopicsParams{
+	arg := sqlc.PostTopicParams{
 		TopicName:     util.RandomString(5),
 		CreatedBy:     enum.Admin.AdminUuid(),
 		LastUpdatedBy: enum.Admin.AdminUuid(),
 	}
-	id, err := db.Queries.PostTopics(context.Background(), arg)
+	topic, err := db.Queries.PostTopic(context.Background(), arg)
 	require.NoError(t, err)
-	require.NotZero(t, id)
+	require.NotZero(t, topic.ID)
+	require.Equal(t, arg.TopicName, topic.TopicName)
 
-	return id
+	return topic.ID
 }
 
 type postTopicsReq struct {

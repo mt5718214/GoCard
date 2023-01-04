@@ -39,12 +39,12 @@ func PostTopics(c *gin.Context) {
 		return
 	}
 
-	arg := sqlc.PostTopicsParams{
+	arg := sqlc.PostTopicParams{
 		TopicName:     req.TopicName,
 		CreatedBy:     enum.Admin.AdminUuid(),
 		LastUpdatedBy: enum.Admin.AdminUuid(),
 	}
-	if _, err := db.Queries.PostTopics(c, arg); err != nil {
+	if _, err := db.Queries.PostTopic(c, arg); err != nil {
 		log.Println("[Error] PostTopics error: ", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "postTopics error",

@@ -1,4 +1,4 @@
--- name: PostTopics :one
+-- name: PostTopic :one
 INSERT INTO topics (
     topic_name,
     created_by,
@@ -7,7 +7,7 @@ INSERT INTO topics (
     $1,
     $2,
     $3
-) RETURNING id;
+) RETURNING id, topic_name;
 
 -- name: UpdateTopic :one
 UPDATE topics 
