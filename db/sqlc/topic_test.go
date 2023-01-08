@@ -42,3 +42,10 @@ func TestUpdateTopic(t *testing.T) {
 	require.Equal(t, arg.ID, topic.ID)
 	require.Equal(t, arg.TopicName, topic.TopicName)
 }
+
+func TestDeleteTopic(t *testing.T) {
+	topicId := createRandomTopic(t)
+
+	err := testQueries.DeleteTopic(context.Background(), topicId)
+	require.NoError(t, err)
+}

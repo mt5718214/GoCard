@@ -31,15 +31,15 @@ func generateRandomTopic(t *testing.T) uuid.UUID {
 	return topic.ID
 }
 
-type postTopicsReq struct {
+type postTopicReq struct {
 	TopicName string
 }
 
-func TestPostTopics(t *testing.T) {
+func TestPostTopic(t *testing.T) {
 	user := createRandomUser(t, util.RandomPassword(), true)
 	token := generateTestToken(user.ID, user.Name, user.Email, user.IsAdmin)
 
-	arg := postTopicsReq{
+	arg := postTopicReq{
 		TopicName: util.RandomString(5),
 	}
 	jsonValue, err := json.Marshal(arg)
@@ -47,7 +47,8 @@ func TestPostTopics(t *testing.T) {
 		log.Fatal("convert to json error: ", err.Error())
 	}
 
-	req, _ := http.NewRequest("POST", "/dev/api/v1/admin/topics/", bytes.NewBuffer(jsonValue))
+	req, err := http.NewRequest("POST", "/dev/api/v1/admin/topics/", bytes.NewBuffer(jsonValue))
+	require.NoError(t, err)
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
@@ -55,16 +56,16 @@ func TestPostTopics(t *testing.T) {
 	require.Equal(t, http.StatusCreated, w.Code)
 }
 
-type UpdateTopicsReq struct {
+type updateTopicReq struct {
 	TopicName string
 }
 
-func TestUpdateTopics(t *testing.T) {
+func TestUpdateTopic(t *testing.T) {
 	topicId := generateRandomTopic(t)
 	user := createRandomUser(t, util.RandomPassword(), true)
 	token := generateTestToken(user.ID, user.Name, user.Email, user.IsAdmin)
 
-	arg := UpdateTopicsReq{
+	arg := updateTopicReq{
 		TopicName: util.RandomString(5),
 	}
 	jsonValue, err := json.Marshal(arg)
@@ -73,7 +74,23 @@ func TestUpdateTopics(t *testing.T) {
 	}
 
 	url := "/dev/api/v1/admin/topics/" + topicId.String()
-	req, _ := http.NewRequest("PUT", url, bytes.NewBuffer(jsonValue))
+	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(jsonValue))
+	require.NoError(t, err)
+	req.Header.Add("Authorization", "Bearer "+token)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	require.Equal(t, http.StatusNoContent, w.Code)
+}
+
+func TestDeleteTopic(t *testing.T) {
+	topicID := generateRandomTopic(t)
+	user := createRandomUser(t, util.RandomPassword(), true)
+	token := generateTestToken(user.ID, user.Name, user.Email, user.IsAdmin)
+
+	url := "/dev/api/v1/admin/topics/" + topicID.String()
+	req, err := http.NewRequest(http.MethodDelete, url, nil)
+	require.NoError(t, err)
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
