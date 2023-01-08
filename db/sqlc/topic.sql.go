@@ -11,7 +11,17 @@ import (
 	"github.com/google/uuid"
 )
 
-const postTopics = `-- name: PostTopics :exec
+const deleteTopic = `-- name: DeleteTopic :exec
+DELETE FROM topics
+WHERE id = $1
+`
+
+func (q *Queries) DeleteTopic(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteTopic, id)
+	return err
+}
+
+const postTopic = `-- name: PostTopic :one
 INSERT INTO topics (
     topic_name,
     created_by,
@@ -20,16 +30,47 @@ INSERT INTO topics (
     $1,
     $2,
     $3
-)
+) RETURNING id, topic_name
 `
 
-type PostTopicsParams struct {
+type PostTopicParams struct {
 	TopicName     string    `json:"topic_name"`
 	CreatedBy     uuid.UUID `json:"created_by"`
 	LastUpdatedBy uuid.UUID `json:"last_updated_by"`
 }
 
-func (q *Queries) PostTopics(ctx context.Context, arg PostTopicsParams) error {
-	_, err := q.db.ExecContext(ctx, postTopics, arg.TopicName, arg.CreatedBy, arg.LastUpdatedBy)
-	return err
+type PostTopicRow struct {
+	ID        uuid.UUID `json:"id"`
+	TopicName string    `json:"topic_name"`
+}
+
+func (q *Queries) PostTopic(ctx context.Context, arg PostTopicParams) (PostTopicRow, error) {
+	row := q.db.QueryRowContext(ctx, postTopic, arg.TopicName, arg.CreatedBy, arg.LastUpdatedBy)
+	var i PostTopicRow
+	err := row.Scan(&i.ID, &i.TopicName)
+	return i, err
+}
+
+const updateTopic = `-- name: UpdateTopic :one
+UPDATE topics 
+SET topic_name = $1
+WHERE id = $2
+RETURNING id, topic_name
+`
+
+type UpdateTopicParams struct {
+	TopicName string    `json:"topic_name"`
+	ID        uuid.UUID `json:"id"`
+}
+
+type UpdateTopicRow struct {
+	ID        uuid.UUID `json:"id"`
+	TopicName string    `json:"topic_name"`
+}
+
+func (q *Queries) UpdateTopic(ctx context.Context, arg UpdateTopicParams) (UpdateTopicRow, error) {
+	row := q.db.QueryRowContext(ctx, updateTopic, arg.TopicName, arg.ID)
+	var i UpdateTopicRow
+	err := row.Scan(&i.ID, &i.TopicName)
+	return i, err
 }
