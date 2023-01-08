@@ -11,6 +11,16 @@ import (
 	"github.com/google/uuid"
 )
 
+const deleteTopic = `-- name: DeleteTopic :exec
+DELETE FROM topics
+WHERE id = $1
+`
+
+func (q *Queries) DeleteTopic(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteTopic, id)
+	return err
+}
+
 const postTopic = `-- name: PostTopic :one
 INSERT INTO topics (
     topic_name,

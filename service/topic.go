@@ -113,3 +113,39 @@ func UpdateTopic(c *gin.Context) {
 
 	c.JSON(http.StatusNoContent, nil)
 }
+
+type deleteTopicReq struct {
+	TopicID string `uri:"topicID" binding:"required,uuid"`
+}
+
+// UpdateTopic  godoc
+// @Summary     delete topic
+// @Schemes
+// @Description	delete topic
+// @Tags        topic
+// @Accept      json
+// @Produce     json
+// @Param       topicID path string true "topicID(uuid)"
+// @Success     204
+// @Router      /admin/topics/:topicId [delete]
+// @Security    BearerAuth
+func DeleteTopic(c *gin.Context) {
+	var req deleteTopicReq
+	if err := c.ShouldBindUri(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "invalid uuid",
+		})
+		return
+	}
+
+	id, _ := uuid.Parse(req.TopicID)
+	if err := db.Queries.DeleteTopic(c, id); err != nil {
+		log.Println("[Error] DeleteTopic error: ", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "deleteTopic err",
+		})
+		return
+	}
+
+	c.JSON(http.StatusNoContent, nil)
+}
