@@ -30,6 +30,7 @@ services:
       # - redis
     build:
       context: ./
+      target: test
     env_file:
       - .env
     ports:
