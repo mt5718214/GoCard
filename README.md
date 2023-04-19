@@ -5,6 +5,7 @@
 - [Install sqlc](#install-sqlc-official-doc)
 - [Project init](#project-init)
     - [generate swagger api doc](#download-swag-by-using)
+- [DB Schema](#db-schema)
 
 ## Install golang-migration CLI ([official doc](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate))
 ### MacOS
@@ -88,3 +89,6 @@ export PATH=$(go env GOPATH)/bin:$PATH
 ```sh
 make swag
 ```
+
+## DB Schema
+![](./docs/img/dbdiagram.png)
